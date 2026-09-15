@@ -1,0 +1,2587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopAI — Smart Store Assistant & Admin Panel</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans for crystal-clear readability -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* =======================================================
+               EYE-COMFORT ERGONOMIC LIGHT PALETTE (Warm Linen & Emerald)
+               - Anti-glare soft linen background (calm, zero blinding white)
+               - Razor-sharp deep slate typography for optimal contrast
+               - Soothing emerald, teal, and warm amber accents
+               ======================================================= */
+            --bg-base: #f6f8f7;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f3;
+            --bg-input: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --border-focus: #059669;
+
+            /* Ergonomic Emerald & Mint Accents */
+            --primary: #059669;
+            --primary-gradient: linear-gradient(135deg, #059669 0%, #10b981 50%, #0d9488 100%);
+            --primary-hover: #047857;
+            --primary-light: rgba(5, 150, 105, 0.08);
+            --accent-mint: #10b981;
+            --accent-teal: #0d9488;
+            --accent-glow: rgba(5, 150, 105, 0.15);
+
+            /* Semantic States (Eye-Soothing Hues) */
+            --success: #059669;
+            --success-hover: #047857;
+            --success-light: rgba(5, 150, 105, 0.1);
+
+            --warning: #d97706;
+            --warning-light: rgba(217, 119, 6, 0.1);
+
+            --danger: #e11d48;
+            --danger-hover: #be123c;
+            --danger-light: rgba(225, 29, 72, 0.1);
+
+            /* Typography & Neutrals */
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.1);
+            --shadow-glow: 0 0 20px rgba(5, 150, 105, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* ================= APP CONTAINER ================= */
+        .app {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar {
+            width: 290px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 20;
+            flex-shrink: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #059669 0%, #10b981 50%, #0d9488 100%);
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            box-shadow: 0 6px 18px rgba(5, 150, 105, 0.25);
+        }
+
+        .brand-text h1 {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: #0f172a;
+        }
+
+        .brand-text span {
+            font-size: 12px;
+            color: #059669;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        /* Navigation Links */
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-dim);
+            padding: 6px 10px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .nav-btn .icon {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-main);
+            border-color: var(--border-color);
+        }
+
+        .nav-btn.active {
+            background: rgba(5, 150, 105, 0.08);
+            color: #059669;
+            border-color: rgba(5, 150, 105, 0.25);
+            box-shadow: 0 2px 10px rgba(5, 150, 105, 0.1);
+        }
+
+        .nav-btn .badge-pill {
+            margin-left: auto;
+            background: #f1f5f3;
+            color: var(--text-muted);
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-btn.active .badge-pill {
+            background: #059669;
+            color: #fff;
+            border-color: transparent;
+        }
+
+        /* Quick Chat Prompts */
+        .quick-prompts {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 5px;
+        }
+
+        .quick-btn {
+            width: 100%;
+            text-align: left;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: #ffffff;
+            color: #334155;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .quick-btn:hover {
+            background: var(--bg-card-hover);
+            color: #059669;
+            border-color: rgba(5, 150, 105, 0.3);
+            transform: translateX(3px);
+        }
+
+        /* Sidebar Footer / Connection Status */
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .status-box {
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: #f8faf9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .dot-indicator {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--warning);
+            box-shadow: 0 0 8px var(--warning);
+            transition: all 0.3s;
+        }
+
+        .dot-indicator.online {
+            background: #059669;
+            box-shadow: 0 0 10px rgba(5, 150, 105, 0.4);
+        }
+
+        .dot-indicator.offline {
+            background: #e11d48;
+            box-shadow: 0 0 10px rgba(225, 29, 72, 0.4);
+        }
+
+        .ping-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 13px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .ping-btn:hover {
+            color: #059669;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Buttons Standard */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #047857 0%, #059669 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            border-color: var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-success {
+            background: #059669;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-danger {
+            background: #e11d48;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background: #be123c;
+        }
+
+        /* ================= MAIN CONTENT ================= */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            min-width: 0;
+            background: var(--bg-base);
+            position: relative;
+        }
+
+        /* Top Bar */
+        .topbar {
+            height: 72px;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            z-index: 10;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .topbar-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: rgba(5, 150, 105, 0.08);
+            border: 1px solid rgba(5, 150, 105, 0.2);
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            color: #059669;
+        }
+
+        .topbar-title h2 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            color: #0f172a;
+        }
+
+        .topbar-title p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge-live {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(5, 150, 105, 0.08);
+            color: #059669;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(5, 150, 105, 0.2);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* ================= VIEW CONTAINER ================= */
+        .view-panel {
+            flex: 1;
+            height: calc(100vh - 72px);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ================= CHAT VIEW ================= */
+        .chat-view {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 24px 130px;
+        }
+
+        .chat-inner {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .welcome-hero {
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .welcome-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 50%, #0d9488 100%);
+            display: grid;
+            place-items: center;
+            font-size: 34px;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.25);
+        }
+
+        .welcome-hero h2 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+            color: #0f172a;
+        }
+
+        .welcome-hero p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .chat-bubble-row {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 22px;
+            animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .chat-bubble-row.user {
+            flex-direction: row-reverse;
+        }
+
+        .chat-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            font-size: 17px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chat-bubble-row.user .chat-avatar {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .bubble-content {
+            max-width: min(720px, 82%);
+            padding: 14px 18px;
+            border-radius: var(--radius-lg);
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .chat-bubble-row.ai .bubble-content {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: #1e293b;
+            border-top-left-radius: 4px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chat-bubble-row.user .bubble-content {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #ffffff;
+            border-top-right-radius: 4px;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.2);
+        }
+
+        /* Typing Dots */
+        .typing-bubble {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 12px 18px;
+        }
+
+        .typing-bubble span {
+            width: 7px;
+            height: 7px;
+            background: #059669;
+            border-radius: 50%;
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+
+        .typing-bubble span:nth-child(2) {
+            animation-delay: 0.18s;
+        }
+
+        .typing-bubble span:nth-child(3) {
+            animation-delay: 0.36s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            40% {
+                transform: translateY(-6px);
+                opacity: 1;
+            }
+        }
+
+        /* Composer Bar */
+        .chat-composer-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 24px 22px;
+            background: linear-gradient(180deg, rgba(246, 248, 247, 0) 0%, var(--bg-base) 40%);
+            z-index: 10;
+        }
+
+        .chat-composer-box {
+            max-width: 860px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 6px 8px 6px 18px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s;
+        }
+
+        .chat-composer-box:focus-within {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #0f172a;
+            font-size: 14px;
+            padding: 10px 0;
+        }
+
+        .chat-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .chat-send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            border: none;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #fff;
+            font-size: 18px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+        }
+
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .composer-hint {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* ================= ADMIN PANEL VIEW ================= */
+        .admin-view {
+            padding: 28px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 26px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Admin Header */
+        .admin-top-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .admin-title h2 {
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.4px;
+            color: #0f172a;
+        }
+
+        .admin-title p {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .admin-header-btns {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Stats / KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(5, 150, 105, 0.3);
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .kpi-emerald {
+            background: rgba(5, 150, 105, 0.08);
+            color: #059669;
+            border: 1px solid rgba(5, 150, 105, 0.2);
+        }
+
+        .kpi-teal {
+            background: rgba(13, 148, 136, 0.08);
+            color: #0d9488;
+            border: 1px solid rgba(13, 148, 136, 0.2);
+        }
+
+        .kpi-amber {
+            background: rgba(217, 119, 6, 0.08);
+            color: #d97706;
+            border: 1px solid rgba(217, 119, 6, 0.2);
+        }
+
+        .kpi-purple {
+            background: rgba(124, 58, 237, 0.08);
+            color: #7c3aed;
+            border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .kpi-details span {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-details h3 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-top: 2px;
+            color: #0f172a;
+        }
+
+        /* ================= PRODUCT FORM (ADD / UPDATE) ================= */
+        .form-card-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .form-card-wrapper.edit-mode {
+            border-color: #d97706;
+            box-shadow: 0 0 20px rgba(217, 119, 6, 0.15);
+        }
+
+        .form-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .form-card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-card-title h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .form-mode-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(5, 150, 105, 0.08);
+            color: #059669;
+            border: 1px solid rgba(5, 150, 105, 0.25);
+        }
+
+        .form-mode-badge.edit {
+            background: rgba(217, 119, 6, 0.1);
+            color: #b45309;
+            border-color: rgba(217, 119, 6, 0.25);
+        }
+
+        .form-fields-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-input);
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+        }
+
+        .form-actions-bar {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* ================= TABLE CARD ================= */
+        .table-card-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table-toolbar {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            background: #fafcfb;
+        }
+
+        .toolbar-left h3 {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0f172a;
+        }
+
+        .count-pill {
+            background: rgba(5, 150, 105, 0.1);
+            color: #059669;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-box {
+            position: relative;
+            min-width: 240px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .product-table th {
+            background: #f8faf9;
+            padding: 14px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .product-table td {
+            padding: 16px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .product-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .product-table tbody tr:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .product-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .product-icon-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            background: #f1f5f3;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .price-text {
+            font-weight: 700;
+            color: #059669;
+        }
+
+        .stock-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .stock-in {
+            background: rgba(5, 150, 105, 0.08);
+            color: #059669;
+        }
+
+        .stock-low {
+            background: rgba(217, 119, 6, 0.1);
+            color: #d97706;
+        }
+
+        .stock-out {
+            background: rgba(225, 29, 72, 0.1);
+            color: #e11d48;
+        }
+
+        .id-badge {
+            font-family: monospace;
+            background: #f1f5f3;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .action-btns-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-action-edit {
+            color: #d97706;
+            border-color: rgba(217, 119, 6, 0.3);
+        }
+
+        .btn-action-edit:hover {
+            background: rgba(217, 119, 6, 0.08);
+        }
+
+        .btn-action-delete {
+            color: #e11d48;
+            border-color: rgba(225, 29, 72, 0.3);
+        }
+
+        .btn-action-delete:hover {
+            background: rgba(225, 29, 72, 0.08);
+        }
+
+        /* Empty state */
+        .state-empty {
+            padding: 48px 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .state-empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(8px);
+            display: grid;
+            place-items: center;
+            z-index: 100;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 440px;
+            padding: 26px;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-icon-wrap {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: var(--danger-light);
+            color: var(--danger);
+            display: grid;
+            place-items: center;
+            font-size: 26px;
+            margin-bottom: 18px;
+        }
+
+        .modal-box h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .modal-box p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 22px;
+        }
+
+        .modal-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .toast-msg {
+            pointer-events: auto;
+            min-width: 300px;
+            max-width: 400px;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-lg);
+            animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .toast-msg.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast-msg.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast-msg.info {
+            border-left: 4px solid #059669;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Responsive */
+        @media (max-width: 860px) {
+            .sidebar {
+                position: fixed;
+                left: -300px;
+                top: 0;
+                bottom: 0;
+                box-shadow: var(--shadow-lg);
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .form-fields-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-view {
+                padding: 16px;
+            }
+
+            .topbar {
+                padding: 0 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar" id="sidebar">
+
+            <div class="brand">
+                <div class="brand-logo">🤖</div>
+                <div class="brand-text">
+                    <h1>ShopAI</h1>
+                    <span>Store & Assistant</span>
+                </div>
+            </div>
+
+            <!-- Main Navigation -->
+            <div class="nav-section">
+                <div class="nav-label">Navigation</div>
+
+                <button class="nav-btn active" id="navChatBtn" onclick="switchView('chat')">
+                    <span class="icon">💬</span>
+                    <span>AI Assistant</span>
+                </button>
+
+                <button class="nav-btn" id="navAdminBtn" onclick="switchView('admin')" style="display: none;">
+                    <span class="icon">🔐</span>
+                    <span>Product Admin</span>
+                    <span class="badge-pill" id="navProductCount">0</span>
+                </button>
+
+                <button class="nav-btn" id="navOrdersBtn" onclick="switchView('orders')" style="display: none;">
+                    <span class="icon">📦</span>
+                    <span>Store Orders</span>
+                    <span class="badge-pill" id="navOrdersCount">0</span>
+                </button>
+            </div>
+
+            <!-- Quick Chat Prompts (Visible when on Chat View) -->
+            <div class="nav-section" id="quickQuestionsSection">
+                <div class="nav-label">Quick Inquiries</div>
+
+                <div class="quick-prompts">
+                    <button class="quick-btn" onclick="askQuickPrompt('What products are available?')">
+                        📦 Available Products
+                    </button>
+                    <button class="quick-btn" onclick="askQuickPrompt('What is the price of Laptop?')">
+                        💻 Laptop Price & Specs
+                    </button>
+                    <button class="quick-btn" onclick="askQuickPrompt('Show me all recent orders')">
+                        🧾 Show Recent Orders
+                    </button>
+                    <button class="quick-btn" onclick="askQuickPrompt('Check stock of all products')">
+                        📊 Stock Inventory Status
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer Status -->
+            <div class="sidebar-footer">
+                <!-- User Profile / Auth Status Box -->
+                <div id="sidebarUserBox"></div>
+
+                <div class="status-box">
+                    <div class="status-info">
+                        <span class="dot-indicator" id="connDot"></span>
+                        <span id="connText">FastAPI :8000</span>
+                    </div>
+                    <button class="ping-btn" onclick="checkBackendHealth()" title="Check connection">🔄</button>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- ================= MAIN CONTAINER ================= -->
+        <main class="main">
+
+            <!-- Top Header -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                    <div class="topbar-avatar" id="topbarIcon">✨</div>
+                    <div class="topbar-title">
+                        <h2 id="topbarTitle">ShopAI Smart Assistant</h2>
+                        <p id="topbarSubtitle">AI-powered customer & inventory intelligence</p>
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    <div id="topbarUserArea"></div>
+                    <div class="badge-live" id="topbarStatusBadge">
+                        <span>●</span> Live Online
+                    </div>
+                    <button class="btn btn-secondary" style="padding: 7px 13px; font-size: 12px;" onclick="newChat()"
+                        id="topbarNewChatBtn">
+                        ＋ New Chat
+                    </button>
+                </div>
+            </header>
+
+            <!-- ================= VIEW 1: CHATBOT ================= -->
+            <div class="view-panel" id="chatView">
+                <div class="chat-view">
+
+                    <div class="chat-messages" id="chatScroll">
+                        <div class="chat-inner" id="chatMessages">
+                            <div class="welcome-hero" id="welcomeHero">
+                                <div class="welcome-icon">🤖</div>
+                                <h2>How can I help you today?</h2>
+                                <p>
+                                    Ask me anything about store products, live inventory, prices,
+                                    or order statuses. I will fetch the real-time database records for you!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-composer-container">
+                        <div class="chat-composer-box">
+                            <input type="text" class="chat-input" id="chatInput"
+                                placeholder="Ask about products, prices, or orders (e.g. 'Show me all orders')..."
+                                onkeydown="handleChatKeyDown(event)">
+                            <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()">
+                                ➔
+                            </button>
+                        </div>
+                        <div class="composer-hint">
+                            ShopAI Assistant powered by LangChain & Gemini 3.5 Flash API
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ================= VIEW 2: PRODUCT ADMIN PANEL ================= -->
+            <div class="view-panel hidden" id="adminView">
+                <div class="admin-view">
+
+                    <div class="admin-top-header">
+                        <div class="admin-title">
+                            <h2>🔐 Product Inventory Control</h2>
+                            <p>Manage store items, pricing, and real-time database stock counts</p>
+                        </div>
+                        <div class="admin-header-btns">
+                            <button class="btn btn-secondary" onclick="loadProducts(true)">
+                                🔄 Refresh Data
+                            </button>
+                            <button class="btn btn-primary" onclick="focusAddProduct()">
+                                ➕ Add Product
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KPI Stats Grid -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon kpi-emerald">📦</div>
+                            <div class="kpi-details">
+                                <span>Total Products</span>
+                                <h3 id="kpiTotalProducts">0</h3>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon kpi-teal">📊</div>
+                            <div class="kpi-details">
+                                <span>Total Stock</span>
+                                <h3 id="kpiTotalStock">0</h3>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon kpi-amber">💰</div>
+                            <div class="kpi-details">
+                                <span>Inventory Valuation</span>
+                                <h3 id="kpiTotalValue">₹0</h3>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon kpi-purple">⚠️</div>
+                            <div class="kpi-details">
+                                <span>Low Stock Items</span>
+                                <h3 id="kpiLowStock">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Add / Edit Form Card -->
+                    <div class="form-card-wrapper" id="productFormCard" style="display: none;">
+                        <div class="form-card-header">
+                            <div class="form-card-title">
+                                <h3 id="formTitleText">➕ Add New Product</h3>
+                                <span class="form-mode-badge" id="formModeBadge">Create Mode</span>
+                            </div>
+                            <button class="btn btn-secondary" style="display:none; padding:4px 10px; font-size:12px;"
+                                id="formResetBtn" onclick="resetProductForm()">
+                                ✕ Cancel Edit
+                            </button>
+                        </div>
+
+                        <form id="productForm" onsubmit="event.preventDefault(); handleProductSubmit();">
+                            <input type="hidden" id="formProductId" value="">
+                            <div class="form-fields-grid">
+                                <div class="form-group">
+                                    <label for="productName">Product Name *</label>
+                                    <input type="text" id="productName" class="form-control"
+                                        placeholder="e.g. Wireless Gaming Mouse" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="productPrice">Price (₹) *</label>
+                                    <input type="number" id="productPrice" class="form-control" placeholder="e.g. 2499"
+                                        min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="productStock">Stock Quantity *</label>
+                                    <input type="number" id="productStock" class="form-control" placeholder="e.g. 50"
+                                        min="0" required>
+                                </div>
+                            </div>
+
+                            <div class="form-actions-bar">
+                                <button type="button" class="btn btn-secondary" onclick="resetProductForm()">
+                                    Reset
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="formSubmitBtn">
+                                    <span>➕ Add Product</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Products Table -->
+                    <div class="table-card-wrapper">
+                        <div class="table-toolbar">
+                            <div class="toolbar-left">
+                                <h3>
+                                    <span>Inventory Catalog</span>
+                                    <span class="count-pill" id="tableProductCount">0 items</span>
+                                </h3>
+                            </div>
+                            <div class="toolbar-right">
+                                <div class="search-box">
+                                    <span class="search-icon">🔍</span>
+                                    <input type="text" id="productSearchInput" placeholder="Search by name or ID..."
+                                        oninput="filterAndRenderProducts()">
+                                </div>
+                                <select class="form-control" id="productSortSelect" style="width:160px; padding:7px 10px;"
+                                    onchange="filterAndRenderProducts()">
+                                    <option value="id_desc">Sort: Newest First</option>
+                                    <option value="id_asc">Sort: Oldest First</option>
+                                    <option value="name_asc">Sort: Name (A-Z)</option>
+                                    <option value="price_asc">Sort: Price (Low-High)</option>
+                                    <option value="price_desc">Sort: Price (High-Low)</option>
+                                    <option value="stock_asc">Sort: Stock (Low-High)</option>
+                                    <option value="stock_desc">Sort: Stock (High-Low)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="product-table">
+                                <thead id="productsTableHeader">
+                                    <tr>
+                                        <th style="width: 70px;">ID</th>
+                                        <th>Product Name</th>
+                                        <th>Price</th>
+                                        <th>Stock Status</th>
+                                        <th style="text-align: right;" id="actionsTh">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsTableBody">
+                                    <!-- Dynamic product rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ================= VIEW 3: ORDERS VIEWER ================= -->
+            <div class="view-panel hidden" id="ordersView">
+                <div class="admin-view">
+
+                    <div class="admin-top-header">
+                        <div class="admin-title">
+                            <h2>📦 Customer Order History</h2>
+                            <p>View transaction logs and delivery details fetched from FastAPI backend</p>
+                        </div>
+                        <div class="admin-header-btns">
+                            <button class="btn btn-secondary" onclick="loadOrders(true)">
+                                🔄 Refresh Orders
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-card-wrapper">
+                        <div class="table-toolbar">
+                            <div class="toolbar-left">
+                                <h3>
+                                    <span>Store Orders</span>
+                                    <span class="count-pill" id="tableOrdersCount">0</span>
+                                </h3>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="product-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 70px;">Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Email</th>
+                                        <th>Product ID</th>
+                                        <th>Qty</th>
+                                        <th>Total Price</th>
+                                        <th>Status</th>
+                                        <th>Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody">
+                                    <!-- Dynamic orders rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- ================= AUTHENTICATION MODAL (LOGIN / REGISTER) ================= -->
+    <div class="modal-overlay hidden" id="authModal">
+        <div class="modal-box" style="max-width: 420px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                <div style="display: flex; gap: 10px;" id="authTabGroup">
+                    <button class="nav-btn active" id="authTabLogin" type="button" onclick="switchAuthTab('login')" style="padding: 6px 14px; width: auto;">🔑 Login</button>
+                    <button class="nav-btn" id="authTabRegister" type="button" onclick="switchAuthTab('register')" style="padding: 6px 14px; width: auto;">📝 Register</button>
+                </div>
+                <button class="ping-btn" type="button" onclick="closeAuthModal()" style="font-size: 18px;">✕</button>
+            </div>
+
+            <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 6px;">Username</label>
+                    <input type="text" id="authUsernameInput" class="form-control" placeholder="Enter username" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 14px; outline: none;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 6px;">Password</label>
+                    <input type="password" id="authPasswordInput" class="form-control" placeholder="Enter password" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 14px; outline: none;">
+                </div>
+
+                <div class="modal-actions" style="justify-content: space-between; align-items: center;">
+                    <span id="authErrorMsg" style="font-size: 12px; color: var(--danger); font-weight: 600;"></span>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeAuthModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="authSubmitBtn"><span>🔑 Sign In</span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= DELETE CONFIRMATION MODAL ================= -->
+    <div class="modal-overlay hidden" id="deleteModal">
+        <div class="modal-box">
+            <div class="modal-icon-wrap">🗑️</div>
+            <h3>Delete Product?</h3>
+            <p>
+                Are you sure you want to delete <strong id="deleteProductName" style="color: #0f172a;">Product</strong>
+                (ID: #<span id="deleteProductId"></span>)?
+                This action cannot be undone.
+            </p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">
+                    Cancel
+                </button>
+                <button class="btn btn-danger" id="confirmDeleteBtn" onclick="executeDeleteProduct()">
+                    🗑️ Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= TOAST CONTAINER ================= -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        /* ================= CONFIGURATION & STATE ================= */
+        const API_BASE = "http://127.0.0.1:8000";
+        const CHAT_API = `${API_BASE}/chat`;
+        const PRODUCT_API = `${API_BASE}/`;
+        const INSERT_API = `${API_BASE}/insert`;
+        const UPDATE_API = `${API_BASE}/update`;
+        const DELETE_API = `${API_BASE}/delete`;
+        const ORDER_API = `${API_BASE}/order`;
+        const LOGIN_API = `${API_BASE}/login`;
+        const REGISTER_API = `${API_BASE}/register`;
+
+        // Local cache of products & orders
+        let productsData = [];
+        let ordersData = [];
+        let deletingProductId = null;
+        let isBackendOnline = false;
+
+        // Auth state
+        let authToken = localStorage.getItem("shopai_token") || "";
+        let authUsername = localStorage.getItem("shopai_username") || "";
+        let authRole = localStorage.getItem("shopai_role") || "";
+        let authMode = "login";
+
+        /* ================= AUTHENTICATION HELPERS ================= */
+        function getAuthHeaders(includeJson = true) {
+            const headers = {};
+            if (includeJson) headers["Content-Type"] = "application/json";
+            if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+            return headers;
+        }
+
+        function updateAuthUI() {
+            const sidebarUserBox = document.getElementById("sidebarUserBox");
+            const topbarUserArea = document.getElementById("topbarUserArea");
+            const navAdminBtn = document.getElementById("navAdminBtn");
+            const navOrdersBtn = document.getElementById("navOrdersBtn");
+            const productFormCard = document.getElementById("productFormCard");
+
+            const isAdmin = Boolean(authToken && authRole === "admin");
+
+            // Role-based visibility for Admin tabs & forms
+            if (navAdminBtn) navAdminBtn.style.display = isAdmin ? "flex" : "none";
+            if (navOrdersBtn) navOrdersBtn.style.display = isAdmin ? "flex" : "none";
+            if (productFormCard) productFormCard.style.display = isAdmin ? "block" : "none";
+
+            // If user is not admin and currently on admin/orders view, switch to chat
+            if (!isAdmin) {
+                const adminView = document.getElementById("adminView");
+                const ordersView = document.getElementById("ordersView");
+                if ((adminView && !adminView.classList.contains("hidden")) ||
+                    (ordersView && !ordersView.classList.contains("hidden"))) {
+                    switchView("chat");
+                }
+            }
+
+            if (authToken && authUsername) {
+                const roleLabel = authRole.toUpperCase();
+                const roleBadgeClass = authRole === "admin" ? "edit" : "";
+
+                if (sidebarUserBox) {
+                    sidebarUserBox.innerHTML = `
+                        <div style="padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: #f8faf9; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 16px;">👤</span>
+                                    <div>
+                                        <div style="font-size: 13px; font-weight: 700; color: #0f172a;">${escapeHtml(authUsername)}</div>
+                                        <span class="form-mode-badge ${roleBadgeClass}" style="font-size: 9px; padding: 1px 6px;">${escapeHtml(roleLabel)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="nav-btn" onclick="logout()" style="padding: 5px 8px; font-size: 12px; color: var(--danger); border-color: rgba(225,29,72,0.2); justify-content: center;">
+                                <span class="icon" style="width: auto;">🚪</span>
+                                <span>Sign Out</span>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                if (topbarUserArea) {
+                    topbarUserArea.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; background: rgba(5, 150, 105, 0.08); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(5, 150, 105, 0.2);">
+                            <span style="font-size: 13px; font-weight: 700; color: #059669;">👤 ${escapeHtml(authUsername)}</span>
+                            <span class="badge-pill" style="background: #059669; color: #fff; font-size: 10px; padding: 2px 6px;">${escapeHtml(roleLabel)}</span>
+                        </div>
+                    `;
+                }
+            } else {
+                if (sidebarUserBox) {
+                    sidebarUserBox.innerHTML = `
+                        <button class="btn btn-primary" onclick="openAuthModal('login')" style="width: 100%; justify-content: center; font-size: 13px; padding: 9px 12px;">
+                            <span>🔑 Sign In / Register</span>
+                        </button>
+                    `;
+                }
+
+                if (topbarUserArea) {
+                    topbarUserArea.innerHTML = `
+                        <button class="btn btn-primary" onclick="openAuthModal('login')" style="padding: 6px 14px; font-size: 12px;">
+                            <span>🔑 Sign In</span>
+                        </button>
+                    `;
+                }
+            }
+        }
+
+        function openAuthModal(mode = "login") {
+            switchAuthTab(mode);
+            document.getElementById("authErrorMsg").textContent = "";
+            document.getElementById("authUsernameInput").value = "";
+            document.getElementById("authPasswordInput").value = "";
+            document.getElementById("authModal").classList.remove("hidden");
+            document.getElementById("authUsernameInput").focus();
+        }
+
+        function closeAuthModal() {
+            document.getElementById("authModal").classList.add("hidden");
+        }
+
+        function switchAuthTab(mode) {
+            authMode = mode;
+            const tabLogin = document.getElementById("authTabLogin");
+            const tabRegister = document.getElementById("authTabRegister");
+            const submitBtn = document.getElementById("authSubmitBtn");
+            const errorMsg = document.getElementById("authErrorMsg");
+
+            errorMsg.textContent = "";
+
+            if (mode === "login") {
+                tabLogin.classList.add("active");
+                tabRegister.classList.remove("active");
+                submitBtn.innerHTML = "<span>🔑 Sign In</span>";
+            } else {
+                tabRegister.classList.add("active");
+                tabLogin.classList.remove("active");
+                submitBtn.innerHTML = "<span>📝 Register</span>";
+            }
+        }
+
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById("authUsernameInput").value.trim();
+            const password = document.getElementById("authPasswordInput").value;
+            const submitBtn = document.getElementById("authSubmitBtn");
+            const errorMsg = document.getElementById("authErrorMsg");
+
+            if (!username || !password) {
+                errorMsg.textContent = "Please fill in all fields.";
+                return;
+            }
+
+            submitBtn.disabled = true;
+            errorMsg.textContent = "";
+
+            const targetApi = authMode === "login" ? LOGIN_API : REGISTER_API;
+
+            try {
+                const response = await fetch(targetApi, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || data.msg || "Authentication failed");
+                }
+
+                if (authMode === "login") {
+                    if (data.access_token) {
+                        authToken = data.access_token;
+                        authUsername = data.username || username;
+                        authRole = data.role || "customer";
+
+                        localStorage.setItem("shopai_token", authToken);
+                        localStorage.setItem("shopai_username", authUsername);
+                        localStorage.setItem("shopai_role", authRole);
+
+                        showToast(`Welcome back, ${authUsername}! Signed in as ${authRole}.`, "success");
+                        closeAuthModal();
+                        updateAuthUI();
+
+                        if (authRole === "admin") {
+                            loadOrders();
+                        }
+                    } else {
+                        throw new Error(data.msg || "Invalid username or password");
+                    }
+                } else {
+                    if (data.msg === "username already exists") {
+                        throw new Error("Username already exists. Please choose another.");
+                    }
+                    showToast("Account created successfully! Please sign in.", "success");
+                    switchAuthTab("login");
+                    document.getElementById("authUsernameInput").value = username;
+                    document.getElementById("authPasswordInput").focus();
+                }
+            } catch (err) {
+                console.error("Auth error:", err);
+                errorMsg.textContent = err.message || "An error occurred";
+            } finally {
+                submitBtn.disabled = false;
+            }
+        }
+
+        function logout() {
+            authToken = "";
+            authUsername = "";
+            authRole = "";
+
+            localStorage.removeItem("shopai_token");
+            localStorage.removeItem("shopai_username");
+            localStorage.removeItem("shopai_role");
+
+            updateAuthUI();
+            showToast("Signed out successfully", "info");
+
+            const tbody = document.getElementById("ordersTableBody");
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="state-empty">
+                            <div class="state-empty-icon">🔒</div>
+                            <p>Admin access required. Please sign in as Admin to view orders.</p>
+                            <button class="btn btn-primary" style="margin-top:12px;" onclick="openAuthModal('login')">🔑 Sign In as Admin</button>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        /* ================= INITIALIZATION ================= */
+        window.addEventListener("DOMContentLoaded", () => {
+            updateAuthUI();
+            checkBackendHealth();
+            loadProducts();
+            loadOrders();
+
+            // Periodic connection health ping every 30s
+            setInterval(checkBackendHealth, 30000);
+        });
+
+        /* ================= NAVIGATION & VIEW SWITCHER ================= */
+        function switchView(viewName) {
+            const isAdmin = Boolean(authToken && authRole === "admin");
+
+            if ((viewName === "admin" || viewName === "orders") && !isAdmin) {
+                showToast("Admin access required to view this panel. Please sign in as Admin.", "error");
+                openAuthModal("login");
+                return;
+            }
+
+            // Hide all views
+            document.getElementById("chatView").classList.add("hidden");
+            document.getElementById("adminView").classList.add("hidden");
+            document.getElementById("ordersView").classList.add("hidden");
+
+            // Reset active nav buttons
+            document.getElementById("navChatBtn").classList.remove("active");
+            document.getElementById("navAdminBtn").classList.remove("active");
+            document.getElementById("navOrdersBtn").classList.remove("active");
+
+            // Topbar elements
+            const topbarIcon = document.getElementById("topbarIcon");
+            const topbarTitle = document.getElementById("topbarTitle");
+            const topbarSubtitle = document.getElementById("topbarSubtitle");
+            const topbarNewChat = document.getElementById("topbarNewChatBtn");
+            const quickSection = document.getElementById("quickQuestionsSection");
+
+            if (viewName === "chat") {
+                document.getElementById("chatView").classList.remove("hidden");
+                document.getElementById("navChatBtn").classList.add("active");
+                topbarIcon.textContent = "✨";
+                topbarTitle.textContent = "ShopAI Smart Assistant";
+                topbarSubtitle.textContent = "AI-powered customer & inventory intelligence";
+                topbarNewChat.style.display = "inline-flex";
+                if (quickSection) quickSection.style.display = "flex";
+            } else if (viewName === "admin") {
+                document.getElementById("adminView").classList.remove("hidden");
+                document.getElementById("navAdminBtn").classList.add("active");
+                topbarIcon.textContent = "🔐";
+                topbarTitle.textContent = "Product Admin Panel";
+                topbarSubtitle.textContent = "Add, update price/stock, and delete products";
+                topbarNewChat.style.display = "none";
+                if (quickSection) quickSection.style.display = "none";
+                loadProducts();
+            } else if (viewName === "orders") {
+                document.getElementById("ordersView").classList.remove("hidden");
+                document.getElementById("navOrdersBtn").classList.add("active");
+                topbarIcon.textContent = "📦";
+                topbarTitle.textContent = "Customer Orders";
+                topbarSubtitle.textContent = "Monitor store transactions and delivery status";
+                topbarNewChat.style.display = "none";
+                if (quickSection) quickSection.style.display = "none";
+                loadOrders();
+            }
+
+            // Close mobile sidebar if open
+            document.getElementById("sidebar").classList.remove("open");
+        }
+
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("open");
+        }
+
+        /* ================= HEALTH CHECK ================= */
+        async function checkBackendHealth() {
+            const dot = document.getElementById("connDot");
+            const text = document.getElementById("connText");
+            const badge = document.getElementById("topbarStatusBadge");
+
+            try {
+                const response = await fetch(PRODUCT_API, { method: "GET" });
+                if (response.ok) {
+                    isBackendOnline = true;
+                    dot.className = "dot-indicator online";
+                    text.textContent = "FastAPI Online";
+                    badge.innerHTML = "<span>●</span> Live Online";
+                    badge.style.color = "#059669";
+                } else {
+                    throw new Error("HTTP " + response.status);
+                }
+            } catch (err) {
+                isBackendOnline = false;
+                dot.className = "dot-indicator offline";
+                text.textContent = "FastAPI Offline";
+                badge.innerHTML = "<span>○</span> Backend Offline";
+                badge.style.color = "#e11d48";
+            }
+        }
+
+        /* ================= TOAST NOTIFICATIONS ================= */
+        function showToast(message, type = "info") {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = `toast-msg ${type}`;
+
+            let icon = "ℹ️";
+            if (type === "success") icon = "✅";
+            if (type === "error") icon = "❌";
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-body">${escapeHtml(message)}</div>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translateX(40px)";
+                toast.style.transition = "all 0.3s ease";
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        /* ================= CHATBOT FUNCTIONALITY ================= */
+        function addChatMessage(content, sender = "ai") {
+            const hero = document.getElementById("welcomeHero");
+            if (hero) hero.remove();
+
+            const chatMessages = document.getElementById("chatMessages");
+            const row = document.createElement("div");
+            row.className = `chat-bubble-row ${sender}`;
+
+            const avatar = document.createElement("div");
+            avatar.className = "chat-avatar";
+            avatar.textContent = sender === "user" ? "👤" : "🤖";
+
+            const bubble = document.createElement("div");
+            bubble.className = "bubble-content";
+            bubble.textContent = content;
+
+            row.appendChild(avatar);
+            row.appendChild(bubble);
+            chatMessages.appendChild(row);
+
+            scrollChatToBottom();
+            return row;
+        }
+
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById("chatMessages");
+            const row = document.createElement("div");
+            row.className = "chat-bubble-row ai";
+            row.id = "chatTypingIndicator";
+
+            row.innerHTML = `
+                <div class="chat-avatar">🤖</div>
+                <div class="bubble-content typing-bubble">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+
+            chatMessages.appendChild(row);
+            scrollChatToBottom();
+            return row;
+        }
+
+        function removeTypingIndicator() {
+            const typing = document.getElementById("chatTypingIndicator");
+            if (typing) typing.remove();
+        }
+
+        function scrollChatToBottom() {
+            const chatScroll = document.getElementById("chatScroll");
+            chatScroll.scrollTop = chatScroll.scrollHeight;
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById("chatInput");
+            const sendBtn = document.getElementById("chatSendBtn");
+            const question = input.value.trim();
+
+            if (!question || sendBtn.disabled) return;
+
+            if (!authToken) {
+                showToast("Please sign in to start chatting with the AI Assistant", "info");
+                openAuthModal("login");
+                return;
+            }
+
+            addChatMessage(question, "user");
+            input.value = "";
+            sendBtn.disabled = true;
+
+            showTypingIndicator();
+
+            try {
+                const response = await fetch(CHAT_API, {
+                    method: "POST",
+                    headers: getAuthHeaders(true),
+                    body: JSON.stringify({ question: question })
+                });
+
+                removeTypingIndicator();
+
+                if (response.status === 401) {
+                    addChatMessage("🔒 Session expired or invalid authentication token. Please sign in again.", "ai");
+                    openAuthModal("login");
+                    return;
+                }
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errText}`);
+                }
+
+                const data = await response.json();
+                const reply = data.answer || "I couldn't generate an answer.";
+                addChatMessage(reply, "ai");
+            } catch (err) {
+                removeTypingIndicator();
+                addChatMessage("⚠️ Unable to connect to backend server. Please verify that FastAPI is running on http://127.0.0.1:8000.", "ai");
+                console.error("Chat error:", err);
+            } finally {
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+
+        function handleChatKeyDown(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendChatMessage();
+            }
+        }
+
+        function askQuickPrompt(text) {
+            switchView("chat");
+            document.getElementById("chatInput").value = text;
+            sendChatMessage();
+        }
+
+        function newChat() {
+            const chatMessages = document.getElementById("chatMessages");
+            chatMessages.innerHTML = `
+                <div class="welcome-hero" id="welcomeHero">
+                    <div class="welcome-icon">🤖</div>
+                    <h2>How can I help you today?</h2>
+                    <p>
+                        Ask me anything about store products, live inventory, prices, 
+                        or order statuses. I will fetch the real-time database records for you!
+                    </p>
+                </div>
+            `;
+            document.getElementById("chatInput").value = "";
+            document.getElementById("chatInput").focus();
+            showToast("Conversation reset", "info");
+        }
+
+        /* ================= PRODUCT ADMIN: LOAD & RENDER ================= */
+        async function loadProducts(isManualRefresh = false) {
+            const tbody = document.getElementById("productsTableBody");
+
+            if (isManualRefresh) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="state-empty">
+                            <div class="state-empty-icon">🔄</div>
+                            <p>Fetching products from FastAPI backend...</p>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            try {
+                const response = await fetch(PRODUCT_API);
+                if (!response.ok) throw new Error("HTTP " + response.status);
+
+                const data = await response.json();
+                productsData = Array.isArray(data) ? data : [];
+
+                updateProductKPIs();
+                filterAndRenderProducts();
+
+                if (isManualRefresh) {
+                    showToast(`Loaded ${productsData.length} products successfully`, "success");
+                }
+            } catch (err) {
+                console.error("Failed to load products:", err);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="state-empty">
+                            <div class="state-empty-icon">⚠️</div>
+                            <p>Could not load products. Please check if FastAPI backend is running on <strong>http://127.0.0.1:8000</strong>.</p>
+                            <button class="btn btn-secondary" style="margin-top:12px;" onclick="loadProducts(true)">Retry Connection</button>
+                        </td>
+                    </tr>
+                `;
+                if (isManualRefresh) {
+                    showToast("Failed to fetch products from backend", "error");
+                }
+            }
+        }
+
+        function updateProductKPIs() {
+            const totalProducts = productsData.length;
+            const totalStock = productsData.reduce((sum, p) => sum + (Number(p.stock) || 0), 0);
+            const totalValuation = productsData.reduce((sum, p) => sum + ((Number(p.price) || 0) * (Number(p.stock) || 0)), 0);
+            const lowStockCount = productsData.filter(p => (Number(p.stock) || 0) <= 10).length;
+
+            document.getElementById("kpiTotalProducts").textContent = totalProducts;
+            document.getElementById("kpiTotalStock").textContent = totalStock;
+            document.getElementById("kpiTotalValue").textContent = "₹" + totalValuation.toLocaleString("en-IN");
+            document.getElementById("kpiLowStock").textContent = lowStockCount;
+
+            document.getElementById("navProductCount").textContent = totalProducts;
+            document.getElementById("tableProductCount").textContent = `${totalProducts} items`;
+        }
+
+        function filterAndRenderProducts() {
+            const searchQuery = (document.getElementById("productSearchInput").value || "").toLowerCase().trim();
+            const sortMode = document.getElementById("productSortSelect").value;
+            const tbody = document.getElementById("productsTableBody");
+            const actionsTh = document.getElementById("actionsTh");
+
+            const isAdmin = Boolean(authToken && authRole === "admin");
+            if (actionsTh) actionsTh.style.display = isAdmin ? "table-cell" : "none";
+
+            let filtered = productsData.filter(p => {
+                const matchName = (p.name || "").toLowerCase().includes(searchQuery);
+                const matchId = String(p.id).includes(searchQuery);
+                return matchName || matchId;
+            });
+
+            // Sorting
+            filtered.sort((a, b) => {
+                if (sortMode === "id_desc") return (b.id || 0) - (a.id || 0);
+                if (sortMode === "id_asc") return (a.id || 0) - (b.id || 0);
+                if (sortMode === "name_asc") return (a.name || "").localeCompare(b.name || "");
+                if (sortMode === "price_asc") return (a.price || 0) - (b.price || 0);
+                if (sortMode === "price_desc") return (b.price || 0) - (a.price || 0);
+                if (sortMode === "stock_asc") return (a.stock || 0) - (b.stock || 0);
+                if (sortMode === "stock_desc") return (b.stock || 0) - (a.stock || 0);
+                return 0;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="${isAdmin ? 5 : 4}" class="state-empty">
+                            <div class="state-empty-icon">🔍</div>
+                            <p>No products match your criteria.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(p => {
+                const stockVal = Number(p.stock) || 0;
+                let stockBadge = `<span class="stock-pill stock-in">● In Stock (${stockVal})</span>`;
+                if (stockVal === 0) {
+                    stockBadge = `<span class="stock-pill stock-out">● Out of Stock (0)</span>`;
+                } else if (stockVal <= 10) {
+                    stockBadge = `<span class="stock-pill stock-low">⚠️ Low Stock (${stockVal})</span>`;
+                }
+
+                const actionsTd = isAdmin ? `
+                    <td style="text-align: right;">
+                        <div class="action-btns-group" style="justify-content: flex-end;">
+                            <button class="btn-action btn-action-edit" onclick="startEditProduct(${p.id})">
+                                ✏️ Edit
+                            </button>
+                            <button class="btn-action btn-action-delete" onclick="promptDeleteProduct(${p.id})">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </td>
+                ` : '';
+
+                return `
+                    <tr>
+                        <td><span class="id-badge">#${p.id}</span></td>
+                        <td>
+                            <div class="product-name-cell">
+                                <div class="product-icon-avatar">🏷️</div>
+                                <span>${escapeHtml(p.name)}</span>
+                            </div>
+                        </td>
+                        <td><span class="price-text">₹${(Number(p.price) || 0).toLocaleString("en-IN")}</span></td>
+                        <td>${stockBadge}</td>
+                        ${actionsTd}
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        /* ================= PRODUCT FORM: ADD & UPDATE ================= */
+        function focusAddProduct() {
+            resetProductForm();
+            const formCard = document.getElementById("productFormCard");
+            formCard.scrollIntoView({ behavior: "smooth", block: "center" });
+            document.getElementById("productName").focus();
+        }
+
+        function startEditProduct(productId) {
+            const product = productsData.find(p => p.id === productId);
+            if (!product) {
+                showToast("Product not found", "error");
+                return;
+            }
+
+            document.getElementById("formProductId").value = product.id;
+            document.getElementById("productName").value = product.name || "";
+            document.getElementById("productPrice").value = product.price ?? "";
+            document.getElementById("productStock").value = product.stock ?? "";
+
+            const formCard = document.getElementById("productFormCard");
+            formCard.classList.add("edit-mode");
+
+            document.getElementById("formTitleText").innerHTML = `✏️ Update Product <span style="color:#d97706;">#${product.id}</span>`;
+            const modeBadge = document.getElementById("formModeBadge");
+            modeBadge.textContent = "Edit Mode";
+            modeBadge.className = "form-mode-badge edit";
+
+            const submitBtn = document.getElementById("formSubmitBtn");
+            submitBtn.className = "btn btn-success";
+            submitBtn.innerHTML = "<span>💾 Update Product</span>";
+
+            document.getElementById("formResetBtn").style.display = "inline-flex";
+
+            formCard.scrollIntoView({ behavior: "smooth", block: "center" });
+            document.getElementById("productName").focus();
+        }
+
+        function resetProductForm() {
+            document.getElementById("formProductId").value = "";
+            document.getElementById("productForm").reset();
+
+            const formCard = document.getElementById("productFormCard");
+            formCard.classList.remove("edit-mode");
+
+            document.getElementById("formTitleText").textContent = "➕ Add New Product";
+            const modeBadge = document.getElementById("formModeBadge");
+            modeBadge.textContent = "Create Mode";
+            modeBadge.className = "form-mode-badge";
+
+            const submitBtn = document.getElementById("formSubmitBtn");
+            submitBtn.className = "btn btn-primary";
+            submitBtn.innerHTML = "<span>➕ Add Product</span>";
+
+            document.getElementById("formResetBtn").style.display = "none";
+        }
+
+        async function handleProductSubmit() {
+            const id = document.getElementById("formProductId").value;
+            const name = document.getElementById("productName").value.trim();
+            const price = document.getElementById("productPrice").value;
+            const stock = document.getElementById("productStock").value;
+            const submitBtn = document.getElementById("formSubmitBtn");
+
+            if (!authToken || authRole !== "admin") {
+                showToast("Admin access required to create/update products. Please sign in as Admin.", "error");
+                openAuthModal("login");
+                return;
+            }
+
+            if (!name) {
+                showToast("Please enter a valid product name", "error");
+                document.getElementById("productName").focus();
+                return;
+            }
+
+            if (price === "" || isNaN(price) || Number(price) < 0) {
+                showToast("Please enter a valid positive price", "error");
+                document.getElementById("productPrice").focus();
+                return;
+            }
+
+            if (stock === "" || isNaN(stock) || Number(stock) < 0) {
+                showToast("Please enter a valid stock quantity", "error");
+                document.getElementById("productStock").focus();
+                return;
+            }
+
+            const payload = {
+                name: name,
+                price: parseInt(price, 10),
+                stock: parseInt(stock, 10)
+            };
+
+            const isUpdate = Boolean(id);
+            const targetUrl = isUpdate ? `${UPDATE_API}/${id}` : INSERT_API;
+            const method = isUpdate ? "PUT" : "POST";
+
+            submitBtn.disabled = true;
+            const originalHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = `<span>⏳ Saving...</span>`;
+
+            try {
+                const response = await fetch(targetUrl, {
+                    method: method,
+                    headers: getAuthHeaders(true),
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    showToast("Admin access required to perform this action. Please sign in as Admin.", "error");
+                    openAuthModal("login");
+                    return;
+                }
+
+                if (!response.ok) {
+                    const err = await response.text();
+                    throw new Error(err || `Server returned ${response.status}`);
+                }
+
+                showToast(
+                    isUpdate ? `Product #${id} updated successfully!` : "New product added successfully!",
+                    "success"
+                );
+
+                resetProductForm();
+                await loadProducts();
+            } catch (err) {
+                console.error("Save product error:", err);
+                showToast(`Failed to ${isUpdate ? 'update' : 'add'} product: ${err.message}`, "error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHtml;
+            }
+        }
+
+        /* ================= PRODUCT ADMIN: DELETE MODAL ================= */
+        function promptDeleteProduct(productId) {
+            const product = productsData.find(p => p.id === productId);
+            if (!product) return;
+
+            if (!authToken || authRole !== "admin") {
+                showToast("Admin access required to delete products. Please sign in as Admin.", "error");
+                openAuthModal("login");
+                return;
+            }
+
+            deletingProductId = productId;
+            document.getElementById("deleteProductName").textContent = `"${product.name}"`;
+            document.getElementById("deleteProductId").textContent = product.id;
+            document.getElementById("deleteModal").classList.remove("hidden");
+        }
+
+        function closeDeleteModal() {
+            deletingProductId = null;
+            document.getElementById("deleteModal").classList.add("hidden");
+        }
+
+        async function executeDeleteProduct() {
+            if (!deletingProductId) return;
+
+            const confirmBtn = document.getElementById("confirmDeleteBtn");
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = "Deleting...";
+
+            try {
+                const response = await fetch(`${DELETE_API}/${deletingProductId}`, {
+                    method: "DELETE",
+                    headers: getAuthHeaders(false)
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    showToast("Admin access required to delete products. Please sign in as Admin.", "error");
+                    openAuthModal("login");
+                    closeDeleteModal();
+                    return;
+                }
+
+                if (!response.ok) {
+                    const err = await response.text();
+                    throw new Error(err || `HTTP ${response.status}`);
+                }
+
+                showToast(`Product #${deletingProductId} deleted successfully`, "success");
+                closeDeleteModal();
+
+                if (document.getElementById("formProductId").value == deletingProductId) {
+                    resetProductForm();
+                }
+
+                await loadProducts();
+            } catch (err) {
+                console.error("Delete product error:", err);
+                showToast(`Failed to delete product: ${err.message}`, "error");
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = "🗑️ Yes, Delete";
+            }
+        }
+
+        /* ================= ORDERS VIEWER ================= */
+        async function loadOrders(isManualRefresh = false) {
+            const tbody = document.getElementById("ordersTableBody");
+
+            if (!authToken || authRole !== "admin") {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="state-empty">
+                            <div class="state-empty-icon">🔒</div>
+                            <p>Admin access required. Please sign in as Admin to view orders.</p>
+                            <button class="btn btn-primary" style="margin-top:12px;" onclick="openAuthModal('login')">🔑 Sign In as Admin</button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetch(ORDER_API, {
+                    headers: getAuthHeaders(false)
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="state-empty">
+                                <div class="state-empty-icon">🔒</div>
+                                <p>Admin access required. Signed in user role (${escapeHtml(authRole || 'customer')}) is not authorized to view orders.</p>
+                                <button class="btn btn-primary" style="margin-top:12px;" onclick="openAuthModal('login')">🔑 Sign In as Admin</button>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                if (!response.ok) throw new Error("HTTP " + response.status);
+
+                const data = await response.json();
+                ordersData = Array.isArray(data) ? data : [];
+
+                document.getElementById("navOrdersCount").textContent = ordersData.length;
+                document.getElementById("tableOrdersCount").textContent = `${ordersData.length} orders`;
+
+                if (ordersData.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="state-empty">
+                                <div class="state-empty-icon">📦</div>
+                                <p>No customer orders found in database.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = ordersData.map(o => `
+                    <tr>
+                        <td><span class="id-badge">#${o.id}</span></td>
+                        <td style="font-weight: 600; color: #0f172a;">${escapeHtml(o.customer_name || "Guest")}</td>
+                        <td style="color: #64748b; font-size: 13px;">${escapeHtml(o.customer_email || "N/A")}</td>
+                        <td><span class="id-badge">Prod #${o.product_id}</span></td>
+                        <td style="font-weight: 700; color: #0f172a;">${o.quantity || 1}</td>
+                        <td><span class="price-text">₹${(Number(o.total_price) || 0).toLocaleString("en-IN")}</span></td>
+                        <td><span class="stock-pill stock-in">${escapeHtml(o.status || "Completed")}</span></td>
+                        <td style="color: #64748b; font-size: 13px;">${escapeHtml(o.address || "N/A")}</td>
+                    </tr>
+                `).join("");
+
+                if (isManualRefresh) {
+                    showToast(`Loaded ${ordersData.length} orders successfully`, "success");
+                }
+            } catch (err) {
+                console.error("Failed to load orders:", err);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="state-empty">
+                            <div class="state-empty-icon">⚠️</div>
+                            <p>Unable to fetch orders from FastAPI backend.</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        /* ================= UTILITY: HTML ESCAPING ================= */
+        function escapeHtml(str) {
+            if (!str) return "";
+            const div = document.createElement("div");
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+</html>

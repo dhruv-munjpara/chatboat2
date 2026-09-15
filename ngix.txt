@@ -1,0 +1,175 @@
+cd "C:\Users\dhruv\AppData\Local\Microsoft\WinGet\Packages\nginxinc.nginx_Microsoft.Winget.Source_8wekyb3d8bbwe\nginx-1.31.5"
+
+nginx.exe
+
+netstat -ano | findstr :80
+
+
+avu avse:
+TCP    0.0.0.0:80    0.0.0.0:0    LISTENING    xxxx
+
+open:http://localhost
+
+
+
+| Role        | Username    | Password      |
+| ----------- | ----------- | ------------- |
+| 👑 Admin    | `admin`     | `admin123`    |
+| 👤 Customer | `customer1` | `customer123` |
+
+
+
+kai pan change kari ne ano use thay che:
+.\nginx.exe -t
+
+
+
+
+
+                    ┌─────────────────┐
+                    │    CUSTOMER     │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │    Frontend     │
+                    │   HTML / JS     │
+                    └────────┬────────┘
+                             │
+                             │ HTTP Request
+                             ▼
+                    ┌─────────────────┐
+                    │      NGINX      │
+                    │      :80        │
+                    └───────┬─┬───────┘
+                            │ │
+                  /         │ │ /api/*
+                  │         │ │
+                  ▼         │ ▼
+             Frontend       │ FastAPI
+                            │ :8000
+                            │
+                            ▼
+                    ┌─────────────────┐
+                    │ Authentication  │
+                    │     JWT         │
+                    └────────┬────────┘
+                             │
+                    ┌────────┴────────┐
+                    │                 │
+                 Customer           Admin
+                    │                 │
+                    ▼                 ▼
+             Product Access    Product + Orders
+                    │                 │
+                    └────────┬────────┘
+                             ▼
+                    ┌─────────────────┐
+                    │    Chatbot      │
+                    │ LangChain/LLM   │
+                    └────────┬────────┘
+                             │
+                    ┌────────┴────────┐
+                    │                 │
+              Product Tool      Order Tool
+                    │                 │
+                    └────────┬────────┘
+                             ▼
+                    ┌─────────────────┐
+                    │      MySQL      │
+                    │    chatboat2    │
+                    └─────────────────┘
+
+
+
+Login
+  ↓
+Username + Password
+  ↓
+FastAPI verifies password
+  ↓
+JWT Token
+  ↓
+Frontend stores token
+  ↓
+Every protected request
+Authorization: Bearer <token>
+  ↓
+FastAPI verifies JWT
+  ↓
+role?
+ ├── customer → no orders / no CRUD
+ └── admin    → orders + CRUD
+
+
+User asks question
+       ↓
+POST /api/chat
+       ↓
+JWT verification
+       ↓
+Check role
+       ↓
+Customer ──────→ Product Tool only
+       │
+       └──────→ Orders ❌
+
+Admin ─────────→ Product Tool
+       │
+       └────────→ Order Tool
+       ↓
+LLM generates answer
+       ↓
+Frontend displays answer
+
+
+
+Browser
+   │
+   ▼
+localhost / Live Domain
+   │
+   ▼
+Nginx
+   ├── /          → frontend/index.html
+   │
+   ├── /api/      → FastAPI
+   │
+   └── /api/chat  → FastAPI
+                    + Rate Limit
+
+
+
+project start flow::::
+🚀 App Run Flow
+
+Step 1: Open XAMPP → MySQL → Start → Apache start કરવાનું નથી.
+
+Step 2: Open VS Code → Open project chatboat2.
+
+Step 3: VS Code માં Terminal open કર → backend folderમાં જા → uvicorn main:app --reload run કર.
+
+Step 4: New Terminal open કર → Nginx folderમાં જા → નીચેની commands એક પછી એક run કર:
+
+cd "C:\Users\dhruv\AppData\Local\Microsoft\WinGet\Packages\nginxinc.nginx_Microsoft.Winget.Source_8wekyb3d8bbwe\nginx-1.31.5"
+.\nginx.exe
+
+Step 5: Browser open કર → http://localhost open કર.
+
+Step 6: Login કર → Customer અથવા Admin તરીકે app use કર.
+
+Step 7: કામ પૂરું થાય પછી → Backend terminalમાં Ctrl + C → Nginx folderમાં:
+
+.\nginx.exe -s stop
+
+→ પછી XAMPPમાં MySQL → Stop.
+
+
+
+
+
+stop no thay to nginx:
+taskkill /F /IM nginx.exe
+
+
+tasklist | findstr nginx
