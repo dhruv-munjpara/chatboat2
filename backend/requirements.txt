@@ -2,7 +2,7 @@ fastapi
 uvicorn
 pydantic
 sqlalchemy
-pymysql
+psycopg[binary]
 requests
 python-dotenv
 langchain

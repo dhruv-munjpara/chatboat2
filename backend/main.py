@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, INTEGER, String, DateTime
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
-import requests
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.tools import tool
@@ -28,6 +27,12 @@ pwd_context = CryptContext(
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY is not set")
+
+if not ALGORITHM:
+    raise RuntimeError("ALGORITHM is not set")
+    
 # 🟩 ADDED
 def hash_password(password: str):
     return pwd_context.hash(password)
@@ -113,8 +118,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-engine = create_engine("mysql+pymysql://root:@localhost/chatboat2")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is not set")
+
+engine = create_engine(DATABASE_URL)
 base = declarative_base()
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -342,52 +351,59 @@ def delete(
 # =========================
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-3.5-flash",
+    model="gemini-3.6-flash",
     google_api_key=os.getenv("GEMINI_API_KEY"),
     temperature=0.8
 )
 
-# API URLs
-product_api = "http://127.0.0.1:8000/"
-order_api = "http://127.0.0.1:8000/order"
 
 
-# =========================
-# PRODUCT TOOL
-# =========================
-
-@tool
-def myproductdata():
-    """give me all product data from this api"""
-
-    response = requests.get(product_api)
-
-    return response.json()
 
 
 # =========================
 # AGENT
 # =========================
 
-def get_agent(current_user):
+def get_agent(current_user, db):
+
+    @tool
+    def myproductdata():
+        """give me all product data"""
+
+        products = db.query(product).all()
+
+        return [
+            {
+                "id": p.id,
+                "name": p.name,
+                "price": p.price,
+                "stock": p.stock
+            }
+            for p in products
+        ]
 
     if current_user["role"] == "admin":
-        token = current_user["token"]  # 🟩 ADDED
 
-        @tool  # 🟩 ADDED
-        def myordersdata():  # 🟩 ADDED
-            """give me all orders data from this api"""  # 🟩 ADDED
+        @tool
+        def myordersdata():
+            """give me all orders data"""
 
-            headers = {  # 🟩 ADDED
-                "Authorization": f"Bearer {token}"  # 🟩 ADDED
-            }  # 🟩 ADDED
+            orders = db.query(order).all()
 
-            response = requests.get(  # 🟩 ADDED
-                order_api,  # 🟩 ADDED
-                headers=headers  # 🟩 ADDED
-            )  # 🟩 ADDED
-
-            return response.json()  # 🟩 ADDED
+            return [
+                {
+                    "id": o.id,
+                    "product_id": o.product_id,
+                    "quantity": o.quantity,
+                    "customer_name": o.customer_name,
+                    "customer_email": o.customer_email,
+                    "total_price": o.total_price,
+                    "status": o.status,
+                    "order_date": str(o.order_date),
+                    "address": o.address
+                }
+                for o in orders
+            ]
 
         tools = [
             myproductdata,
@@ -400,11 +416,8 @@ def get_agent(current_user):
         ]
 
     agent = create_agent(
-
         model=llm,
-
         tools=tools,
-
         system_prompt="""
         you are a helpful assistant.
 
@@ -434,11 +447,12 @@ class ChatRequest(BaseModel):
 @app.post("/chat")
 def chat(
     request: ChatRequest,
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
     print("CURRENT USER:", current_user)
 
-    agent = get_agent(current_user)
+    agent = get_agent(current_user, db)
 
     result = agent.invoke({
         "messages": [
