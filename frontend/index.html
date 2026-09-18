@@ -1661,7 +1661,7 @@
     <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
         /* ================= CONFIGURATION & STATE ================= */
-        const API_BASE = "http://127.0.0.1:8000";
+        const API_BASE = "https://chatboat2-backend.onrender.com";
         const CHAT_API = `${API_BASE}/chat`;
         const PRODUCT_API = `${API_BASE}/`;
         const INSERT_API = `${API_BASE}/insert`;
@@ -2114,7 +2114,7 @@
                 addChatMessage(reply, "ai");
             } catch (err) {
                 removeTypingIndicator();
-                addChatMessage("⚠️ Unable to connect to backend server. Please verify that FastAPI is running on http://127.0.0.1:8000.", "ai");
+                addChatMessage("⚠️ Unable to connect to backend server. Please verify backend service status.", "ai");
                 console.error("Chat error:", err);
             } finally {
                 sendBtn.disabled = false;
@@ -2186,7 +2186,7 @@
                     <tr>
                         <td colspan="5" class="state-empty">
                             <div class="state-empty-icon">⚠️</div>
-                            <p>Could not load products. Please check if FastAPI backend is running on <strong>http://127.0.0.1:8000</strong>.</p>
+                            <p>Could not load products. Please check backend connection.</p>
                             <button class="btn btn-secondary" style="margin-top:12px;" onclick="loadProducts(true)">Retry Connection</button>
                         </td>
                     </tr>
