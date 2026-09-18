@@ -25,9 +25,10 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./backend
+          file: ./backend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/salary-api:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/chatboat2-backend:latest
 
   deploy-to-render:
     name: Trigger Render Deployment

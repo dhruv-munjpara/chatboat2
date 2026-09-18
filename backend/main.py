@@ -351,7 +351,7 @@ def delete(
 # =========================
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-3.6-flash",
+    model="gemini-1.5-flash",
     google_api_key=os.getenv("GEMINI_API_KEY"),
     temperature=0.8
 )
