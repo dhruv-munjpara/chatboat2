@@ -584,10 +584,14 @@
         }
 
         @keyframes bounce {
-            0%, 80%, 100% {
+
+            0%,
+            80%,
+            100% {
                 transform: translateY(0);
                 opacity: 0.4;
             }
+
             40% {
                 transform: translateY(-6px);
                 opacity: 1;
@@ -1204,18 +1208,37 @@
 
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         /* Scrollbar */
@@ -1513,8 +1536,8 @@
                                     <input type="text" id="productSearchInput" placeholder="Search by name or ID..."
                                         oninput="filterAndRenderProducts()">
                                 </div>
-                                <select class="form-control" id="productSortSelect" style="width:160px; padding:7px 10px;"
-                                    onchange="filterAndRenderProducts()">
+                                <select class="form-control" id="productSortSelect"
+                                    style="width:160px; padding:7px 10px;" onchange="filterAndRenderProducts()">
                                     <option value="id_desc">Sort: Newest First</option>
                                     <option value="id_asc">Sort: Oldest First</option>
                                     <option value="name_asc">Sort: Name (A-Z)</option>
@@ -1604,30 +1627,39 @@
     <!-- ================= AUTHENTICATION MODAL (LOGIN / REGISTER) ================= -->
     <div class="modal-overlay hidden" id="authModal">
         <div class="modal-box" style="max-width: 420px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+            <div
+                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
                 <div style="display: flex; gap: 10px;" id="authTabGroup">
-                    <button class="nav-btn active" id="authTabLogin" type="button" onclick="switchAuthTab('login')" style="padding: 6px 14px; width: auto;">🔑 Login</button>
-                    <button class="nav-btn" id="authTabRegister" type="button" onclick="switchAuthTab('register')" style="padding: 6px 14px; width: auto;">📝 Register</button>
+                    <button class="nav-btn active" id="authTabLogin" type="button" onclick="switchAuthTab('login')"
+                        style="padding: 6px 14px; width: auto;">🔑 Login</button>
+                    <button class="nav-btn" id="authTabRegister" type="button" onclick="switchAuthTab('register')"
+                        style="padding: 6px 14px; width: auto;">📝 Register</button>
                 </div>
                 <button class="ping-btn" type="button" onclick="closeAuthModal()" style="font-size: 18px;">✕</button>
             </div>
 
             <form id="authForm" onsubmit="handleAuthSubmit(event)">
                 <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 6px;">Username</label>
-                    <input type="text" id="authUsernameInput" class="form-control" placeholder="Enter username" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 14px; outline: none;">
+                    <label
+                        style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 6px;">Username</label>
+                    <input type="text" id="authUsernameInput" class="form-control" placeholder="Enter username" required
+                        style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 14px; outline: none;">
                 </div>
 
                 <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 6px;">Password</label>
-                    <input type="password" id="authPasswordInput" class="form-control" placeholder="Enter password" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 14px; outline: none;">
+                    <label
+                        style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 6px;">Password</label>
+                    <input type="password" id="authPasswordInput" class="form-control" placeholder="Enter password"
+                        required
+                        style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 14px; outline: none;">
                 </div>
 
                 <div class="modal-actions" style="justify-content: space-between; align-items: center;">
                     <span id="authErrorMsg" style="font-size: 12px; color: var(--danger); font-weight: 600;"></span>
                     <div style="display: flex; gap: 10px;">
                         <button type="button" class="btn btn-secondary" onclick="closeAuthModal()">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="authSubmitBtn"><span>🔑 Sign In</span></button>
+                        <button type="submit" class="btn btn-primary" id="authSubmitBtn"><span>🔑 Sign
+                                In</span></button>
                     </div>
                 </div>
             </form>
@@ -1661,7 +1693,7 @@
     <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
         /* ================= CONFIGURATION & STATE ================= */
-        const API_BASE = "https://chatboat2-backend.onrender.com";
+        const API_BASE = "https://chatboat2-backend-yomu.onrender.com";
         const CHAT_API = `${API_BASE}/chat`;
         const PRODUCT_API = `${API_BASE}/`;
         const INSERT_API = `${API_BASE}/insert`;
